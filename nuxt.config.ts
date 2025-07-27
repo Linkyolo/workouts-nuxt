@@ -4,8 +4,9 @@ export default defineNuxtConfig({
   devServer: {
     port: 4000
   },
+  css: ['./app/assets/css/main.css'],
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', 'nuxt-graphql-request'],
+  modules: ['@nuxt/ui', 'nuxt-graphql-request', '@nuxt/icon'],
   build: {
     transpile: ['nuxt-graphql-request'],
   },
@@ -41,5 +42,16 @@ export default defineNuxtConfig({
      * default: false (this includes graphql-tag for node_modules folder)
      */
     includeNodeModules: true,
+  },
+
+  ui: {
+    theme: {
+      colors: {
+        primary: 'primary',
+        secondary: 'secondary',
+        tertiary: 'tertiary',
+
+      }
+    }
   },
 })
