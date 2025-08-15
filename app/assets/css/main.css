@@ -20,7 +20,8 @@
 
  --color-primary: #07c569;
  --color-secondary: #0DAB76;
- --color-tertiary: #2f4858;
+ /* --color-tertiary: #2f4858; */
+  --color-tertiary: #9BB1FF ;
   --color-bg: #353A47; /*charcoal*/
 --color-coral:#F38D68;
 --color-vauve:#DFB2F4;}

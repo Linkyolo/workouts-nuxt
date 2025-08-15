@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useFetchWorkouts } from "~/composables/workout/useFetchWorkouts";
-
+import NewWorkout from "~/components/workouts/NewWorkout.vue";
 const { workouts, pending, error } = await useFetchWorkouts();
 
 onMounted(() => {
@@ -59,14 +59,38 @@ function getDropdownActions(): DropdownMenuItem[][] {
     ],
   ];
 }
+
+const showCreateWorkout = ref(false);
+function onShowNewWorkout() {
+  console.log("BTN clicked");
+  showCreateWorkout.value = !showCreateWorkout.value;
+}
 </script>
 
 <template>
-  <div v-if="pending">Pending request...</div>
+  <div v-if="pending">
+    <p>Pending request...</p>
+    <NuxtLoadingIndicator />
+  </div>
   <h1>Retrived:</h1>
   {{ workouts }}
 
   <h1>Table:</h1>
+  <!--Create workout modal-->
+  <div>
+    <UModal :close="{ onClick: () => emit('close', false) }">
+      <UButton
+        label="New Workout"
+        color="secondary"
+        variant="subtle"
+        @click="onShowNewWorkout"
+      />
+      <template #content>
+        <NewWorkout />
+      </template>
+    </UModal>
+  </div>
+
   <UTable :data="workouts" :columns="columns" class="flex-1">
     <!---Exercises-->
     <template #exercises-cell="{ row }">
