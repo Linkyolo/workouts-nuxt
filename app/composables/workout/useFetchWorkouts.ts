@@ -9,6 +9,7 @@ export const useFetchWorkouts = () => {
                 return response?.workouts;
         });
 
+
         return {
                 workouts,
                 pending,

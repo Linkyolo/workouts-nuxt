@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@nuxt/ui": "^3.2.0",
+    "dayjs": "^1.11.13",
     "graphql": "^16.11.0",
     "nuxt": "^4.0.0",
     "nuxt-graphql-request": "^8.1.1",

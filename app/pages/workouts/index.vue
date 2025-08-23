@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useFetchWorkouts } from "~/composables/workout/useFetchWorkouts";
-
+import NewWorkout from "~/components/workouts/NewWorkout.vue";
+import { useDeleteWorkout } from "~/composables/workout/useDeleteWorkout";
+import { useFormatDate } from "~/utils/useFormatDate";
 const { workouts, pending, error } = await useFetchWorkouts();
 
 onMounted(() => {
@@ -23,8 +25,8 @@ const columns = [
   },
 
   {
-    accessorKey: "startTime",
-    header: "StartTime",
+    accessorKey: "endTime",
+    header: "EndTime",
   },
   {
     accessorKey: "exercises",
@@ -35,14 +37,14 @@ const columns = [
   },
 ];
 
-function getDropdownActions(): DropdownMenuItem[][] {
+function getDropdownActions(id: number): DropdownMenuItem[][] {
   return [
     [
       {
         label: "Details",
         icon: "i-lucide-copy",
         onSelect: () => {
-          console.log("WIll edit...");
+          console.log("WIll edit id=...", id);
         },
       },
     ],
@@ -55,19 +57,59 @@ function getDropdownActions(): DropdownMenuItem[][] {
         label: "Delete",
         icon: "i-lucide-trash",
         color: "error",
+        onSelect: () => {
+          console.log("onSelect has id: ", id);
+          //TODO change number to HashID
+          deleteWorkout(Number(id));
+        },
       },
     ],
   ];
 }
+
+const showCreateWorkout = ref(false);
+function onShowNewWorkout() {
+  console.log("BTN clicked");
+  showCreateWorkout.value = !showCreateWorkout.value;
+}
+
+const deleteWorkout = (id: number) => {
+  const res = useDeleteWorkout(id);
+  console.log("Deletetion res:", res);
+};
 </script>
 
 <template>
-  <div v-if="pending">Pending request...</div>
-  <h1>Retrived:</h1>
-  {{ workouts }}
+  <div v-if="pending">
+    <p>Pending request...</p>
+    <NuxtLoadingIndicator />
+  </div>
 
   <h1>Table:</h1>
+  <!--Create workout modal-->
+  <div>
+    <UModal :close="{ onClick: () => emit('close', false) }">
+      <UButton
+        label="New Workout"
+        color="secondary"
+        variant="subtle"
+        @click="onShowNewWorkout"
+      />
+      <template #content>
+        <NewWorkout />
+      </template>
+    </UModal>
+  </div>
+
   <UTable :data="workouts" :columns="columns" class="flex-1">
+    <!---startTime-->
+    <template #startTime-cell="{ row }">
+      {{ useFormatDate(row.original.startTime) }}
+    </template>
+
+    <template #endTime-cell="{ row }">
+      {{ useFormatDate(row.original.endTime) }}
+    </template>
     <!---Exercises-->
     <template #exercises-cell="{ row }">
       {{ row.original.exercises }}
@@ -83,7 +125,7 @@ function getDropdownActions(): DropdownMenuItem[][] {
       </div>
     </template>
     <template #action-cell="{ row }">
-      <UDropdownMenu :items="getDropdownActions()">
+      <UDropdownMenu :items="getDropdownActions(row.original.id)">
         <UButton
           icon="i-lucide-ellipsis-vertical"
           color="neutral"
