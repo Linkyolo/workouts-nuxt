@@ -17,14 +17,23 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
-
+/* 
  --color-primary: #07c569;
  --color-secondary: #0DAB76;
- /* --color-tertiary: #2f4858; */
-  --color-tertiary: #9BB1FF ;
-  --color-bg: #353A47; /*charcoal*/
---color-coral:#F38D68;
---color-vauve:#DFB2F4;}
+ --color-tertiary: #2f4858; 
+ --color-tertiary: #9BB1FF ;
+ --color-bg: #353A47;
+ --color-vauve:#DFB2F4;
+*/
+
+  /*Testing*/
+  /*--color-primary: #00A15C;        Accessible bright green */
+  --color-primary: #007A45;
+  --color-secondary: #268586;     /* Distinct cool secondary */
+  --color-tertiary: #5089C6;      /* Balanced, visible tertiary */
+  --color-bg: #2C2F36;            /* Deeper charcoal */
+ --color-coral:#F38D68;
+}
 
 
 :root {
@@ -53,4 +62,8 @@ body {
   color: white;
   margin: 0;
   font-family: sans-serif;
+}
+
+.modal input::placeholder {
+  color: #1F2937;
 }

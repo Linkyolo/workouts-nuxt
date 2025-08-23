@@ -72,10 +72,14 @@ async function sendWorkout() {
     });
   }
 }
+
+function deleteExercise(index) {
+  workout.value.exercises.splice(index, 1);
+}
 </script>
 
 <template>
-  <UForm :state="workout">
+  <UForm :state="workout" class="flex flex-col items-center">
     <!-- Add Exercise Button -->
     <UButton @click="addExercise" size="md" color="secondary" variant="solid">
       Add Exercise
@@ -85,27 +89,47 @@ async function sendWorkout() {
     <div
       v-for="(ex, id) in workout.exercises"
       :key="id"
-      class="flex flex-wrap gap-4 my-4"
+      class="modal flex gap-2 my-4 mx-8"
     >
-      <UFormField label="Exercise Name">
+      <UFormField label="Name" class="flex-2">
         <UInput placeholder="Name" v-model="ex.name" />
       </UFormField>
 
-      <UFormField label="Typology">
+      <UFormField label="Typology" class="flex-2">
         <UInput placeholder="Typology" v-model="ex.typology" />
       </UFormField>
 
-      <UFormField label="Reps">
-        <UInputNumber placeholder="Reps" v-model="ex.reps" />
+      <UFormField label="Reps" class="flex-1">
+        <UInputNumber
+          placeholder="Reps"
+          v-model="ex.reps"
+          orientation="vertical"
+        />
       </UFormField>
 
-      <UFormField label="Sets">
-        <UInputNumber placeholder="Sets" v-model="ex.sets" />
+      <UFormField label="Sets" class="flex-1">
+        <UInputNumber
+          placeholder="Sets"
+          v-model="ex.sets"
+          orientation="vertical"
+        />
       </UFormField>
 
-      <UFormField label="Rest (sec)">
-        <UInputNumber placeholder="Rest" v-model="ex.rest" />
+      <UFormField label="Rest" class="flex-1">
+        <UInputNumber
+          placeholder="Rest"
+          v-model="ex.rest"
+          orientation="vertical"
+        />
       </UFormField>
+
+      <UButton
+        icon="i-heroicons-trash"
+        variant="ghost"
+        @click="deleteExercise(id)"
+        class="self-end"
+        title="Delete exercise"
+      />
     </div>
 
     <!-- Submit Workout -->

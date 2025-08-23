@@ -50,7 +50,7 @@ export default defineNuxtConfig({
         primary: 'primary',
         secondary: 'secondary',
         tertiary: 'tertiary',
-
+        coral: 'coral'
       }
     }
   },
