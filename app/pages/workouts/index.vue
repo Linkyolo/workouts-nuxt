@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
 import { useFetchWorkouts } from "~/composables/workout/useFetchWorkouts";
 import NewWorkout from "~/components/workouts/NewWorkout.vue";
+import EditWorkout from "~/components/workouts/EditWorkout.vue";
 import { useDeleteWorkout } from "~/composables/workout/useDeleteWorkout";
 import { useFormatDate } from "~/utils/useFormatDate";
 const { workouts, pending, error } = await useFetchWorkouts();
-
-onMounted(() => {
-  console.log("Munted:workouts ", workouts);
-});
 
 const columns = [
   {
@@ -37,6 +33,10 @@ const columns = [
   },
 ];
 
+const selectedID = ref<number | null>(null);
+const showCreateWorkout = ref(false);
+const showEditWorkout = ref(false);
+
 function getDropdownActions(id: number): DropdownMenuItem[][] {
   return [
     [
@@ -44,7 +44,7 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
         label: "Details",
         icon: "i-lucide-copy",
         onSelect: () => {
-          console.log("WIll edit id=...", id);
+          console.log("WIll show detailed for id=...", id);
         },
       },
     ],
@@ -52,6 +52,10 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
       {
         label: "Edit",
         icon: "i-lucide-edit",
+        onSelect: () => {
+          console.log("WIll edit id=...", id);
+          onShowEditWorkout(id);
+        },
       },
       {
         label: "Delete",
@@ -67,10 +71,18 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
   ];
 }
 
-const showCreateWorkout = ref(false);
 function onShowNewWorkout() {
-  console.log("BTN clicked");
   showCreateWorkout.value = !showCreateWorkout.value;
+}
+
+function onShowEditWorkout(id: number) {
+  selectedID.value = id;
+  showEditWorkout.value = !showEditWorkout.value;
+}
+// Close modal
+function closeModal() {
+  showCreateWorkout.value = false;
+  showEditWorkout.value = false;
 }
 
 const deleteWorkout = (id: number) => {
@@ -86,17 +98,24 @@ const deleteWorkout = (id: number) => {
   </div>
 
   <h1>Table:</h1>
-  <!--Create workout modal-->
+
+  <!-- Button to open Create Workout modal -->
+  <UButton
+    label="New Workout"
+    color="secondary"
+    variant="subtle"
+    @click="onShowNewWorkout"
+  />
+  <!-- Single Modal for both Create and Edit -->
   <div>
-    <UModal :close="{ onClick: () => emit('close', false) }">
-      <UButton
-        label="New Workout"
-        color="secondary"
-        variant="subtle"
-        @click="onShowNewWorkout"
-      />
+    <UModal
+      dismissible
+      :open="showCreateWorkout || showEditWorkout"
+      @update:model-value="closeModal"
+    >
       <template #content>
-        <NewWorkout />
+        <NewWorkout v-if="showCreateWorkout" />
+        <EditWorkout :id="parseInt(selectedID)" v-if="showEditWorkout" />
       </template>
     </UModal>
   </div>
@@ -110,20 +129,21 @@ const deleteWorkout = (id: number) => {
     <template #endTime-cell="{ row }">
       {{ useFormatDate(row.original.endTime) }}
     </template>
-    <!---Exercises-->
+    <!-- Exercises -->
     <template #exercises-cell="{ row }">
-      {{ row.original.exercises }}
-
-      <div v-for="ex in row.original.exercises">
-        <ol>
-          <li>
-            <p>name: {{ ex?.name }}</p>
-            <p>reps: {{ ex?.rest }}</p>
-            <p>rest: {{ ex?.reps }}</p>
-          </li>
-        </ol>
+      <div v-for="(ex, index) in row.original.exercises" :key="index">
+        <div @click="onShowEditWorkout(row.original.id)" class="cursor-pointer">
+          <ol>
+            <li>
+              <p>name: {{ ex?.name }}</p>
+              <p>reps: {{ ex?.reps }}</p>
+              <p>rest: {{ ex?.rest }}</p>
+            </li>
+          </ol>
+        </div>
       </div>
     </template>
+
     <template #action-cell="{ row }">
       <UDropdownMenu :items="getDropdownActions(row.original.id)">
         <UButton
@@ -136,4 +156,5 @@ const deleteWorkout = (id: number) => {
     </template>
   </UTable>
   <div v-if="error">Error Retring data</div>
+  <div v-if="error">{{ error }}</div>
 </template>
