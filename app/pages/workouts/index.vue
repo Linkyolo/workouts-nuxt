@@ -4,7 +4,7 @@ import NewWorkout from "~/components/workouts/NewWorkout.vue";
 import EditWorkout from "~/components/workouts/EditWorkout.vue";
 import { useDeleteWorkout } from "~/composables/workout/useDeleteWorkout";
 import { useFormatDate } from "~/utils/useFormatDate";
-const { workouts, pending, error } = await useFetchWorkouts();
+const { workouts, pending, error, refreshWorkouts } = await useFetchWorkouts();
 
 const columns = [
   {
@@ -65,6 +65,8 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
           console.log("onSelect has id: ", id);
           //TODO change number to HashID
           deleteWorkout(Number(id));
+
+          refreshWorkouts();
         },
       },
     ],
@@ -72,23 +74,33 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
 }
 
 function onShowNewWorkout() {
-  showCreateWorkout.value = !showCreateWorkout.value;
+  showCreateWorkout.value = true;
+  showEditWorkout.value = false;
 }
 
 function onShowEditWorkout(id: number) {
   selectedID.value = id;
-  showEditWorkout.value = !showEditWorkout.value;
+  showEditWorkout.value = true;
+  showCreateWorkout.value = false;
 }
 // Close modal
 function closeModal() {
   showCreateWorkout.value = false;
   showEditWorkout.value = false;
+  refreshWorkouts();
 }
 
 const deleteWorkout = (id: number) => {
   const res = useDeleteWorkout(id);
   console.log("Deletetion res:", res);
 };
+
+const isModalOpen = computed({
+  get: () => showCreateWorkout.value || showEditWorkout.value,
+  set: (value: boolean) => {
+    if (!value) closeModal(); // close both when modal is dismissed
+  },
+});
 </script>
 
 <template>
@@ -108,11 +120,7 @@ const deleteWorkout = (id: number) => {
   />
   <!-- Single Modal for both Create and Edit -->
   <div>
-    <UModal
-      dismissible
-      :open="showCreateWorkout || showEditWorkout"
-      @update:model-value="closeModal"
-    >
+    <UModal v-model:open="isModalOpen" dismissible>
       <template #content>
         <NewWorkout v-if="showCreateWorkout" />
         <EditWorkout :id="parseInt(selectedID)" v-if="showEditWorkout" />
@@ -137,6 +145,7 @@ const deleteWorkout = (id: number) => {
             <li>
               <p>name: {{ ex?.name }}</p>
               <p>reps: {{ ex?.reps }}</p>
+              <p>sets: {{ ex?.sets }}</p>
               <p>rest: {{ ex?.rest }}</p>
             </li>
           </ol>

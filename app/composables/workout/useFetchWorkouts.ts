@@ -3,7 +3,7 @@ import { WORKOUTS_QUERY } from "~/graphql/queries/workouts.gql"
 export const useFetchWorkouts = () => {
         const { $graphql } = useNuxtApp();
 
-        const { data: workouts, pending, error } = useAsyncData("workouts", async () => {
+        const { data: workouts, pending, error, refresh: refreshWorkouts } = useAsyncData("workouts", async () => {
                 const response = await $graphql.default.request(WORKOUTS_QUERY);
                 console.log("composable got", response)
                 return response?.workouts;
@@ -14,5 +14,6 @@ export const useFetchWorkouts = () => {
                 workouts,
                 pending,
                 error,
+                refreshWorkouts
         };
 };

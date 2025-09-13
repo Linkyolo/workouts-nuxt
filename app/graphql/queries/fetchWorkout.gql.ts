@@ -11,6 +11,7 @@ export const SINGLE_WORKOUT_QUERY = gql`
       exercises{
         reps
         rest
+        sets
         typology
         name
       }
