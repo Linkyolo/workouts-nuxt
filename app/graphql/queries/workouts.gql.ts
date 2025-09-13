@@ -13,6 +13,7 @@ export const WORKOUTS_QUERY = gql`
       exercises{
         reps
         rest
+        sets
       }
       startTime
       endTime

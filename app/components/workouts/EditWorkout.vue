@@ -4,6 +4,7 @@ import { UFormField } from "#components";
 import { useToast } from "#imports";
 import { useOverlay } from "#imports";
 import { useFetchSingleWorkout } from "~/composables/workout/useFetchSingleWorkout";
+import { useEditWorkout } from "~/composables/workout/useEditWorkout";
 import { Workout } from "~/types/Workout";
 
 const props = defineProps<{
@@ -37,7 +38,7 @@ const {
 watch(
   workoutData,
   (newVal) => {
-    console.log("workout datTA detected...", newVal);
+    console.log("workout detected...", newVal);
     if (newVal) {
       workout.value = {
         ...newVal,
@@ -91,18 +92,16 @@ onMounted(() => {
 });
 
 // Submit workout
-async function sendWorkout() {
+async function submitWorkout() {
   workout.value.type = "Strength & Condition";
   const now = new Date().toISOString();
   workout.value.startTime = now;
   workout.value.endTime = now;
 
   try {
-    // TODO CHANGE to the edit
-    // const { workout: result } = await useCreateWorkout(workout.value);
+    const { workout: result } = await useEditWorkout(props.id, workout.value);
 
-    const result = "ok";
-    console.log("result from useCreateqQuery", result);
+    console.log("EDITING ---->", result);
     if (result.value?.exercises?.length) {
       toast.add({
         color: "success",
@@ -181,7 +180,7 @@ async function sendWorkout() {
     </div>
 
     <!-- Submit Workout -->
-    <UButton @click="sendWorkout" size="md" color="primary" variant="solid">
+    <UButton @click="submitWorkout" size="md" color="primary" variant="solid">
       Send
     </UButton>
   </UForm>
