@@ -54,6 +54,9 @@ export default defineNuxtConfig({
         tertiary: 'tertiary',
         coral: 'coral'
       }
+    },
+    notifications: {
+      position: 'top-0 end-0',
     }
   },
 })

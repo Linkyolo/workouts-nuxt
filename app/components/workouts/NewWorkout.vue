@@ -4,22 +4,8 @@ import { UFormField } from "#components";
 import { useToast } from "#imports";
 import { useOverlay } from "#imports";
 import { useCreateWorkout } from "~/composables/workout/useCreateWorkout";
-
-type Exercise = {
-  typology: string;
-  reps: number;
-  sets: number;
-  rest: number;
-  name: string;
-};
-
-type Workout = {
-  startTime: string | null;
-  endTime: string | null;
-  type: string;
-  userId: number;
-  exercises: Exercise[];
-};
+import { Workout } from "~/types/Workout";
+import { Exercise } from "~/types/Workout";
 
 const workout = ref<Workout>({
   startTime: null,
@@ -45,31 +31,73 @@ function addExercise() {
 }
 
 // Submit workout
-async function sendWorkout() {
-  workout.value.type = "Strength & Condition";
-  const now = new Date().toISOString();
-  workout.value.startTime = now;
-  workout.value.endTime = now;
+async function sendWorkout(workoutData) {
+  // Validate input
+  if (!workoutData?.value) {
+    throw new Error("Invalid workout data");
+  }
 
   try {
-    const { workout: result } = await useCreateWorkout(workout.value);
+    // Prepare workout data
+    const currentTime = new Date().toISOString();
+    const updatedWorkout = {
+      ...workoutData.value,
+      type: "Strength & Conditioning",
+      startTime: currentTime,
+      endTime: currentTime,
+    };
 
-    console.log("result from useCreateqQuery", result);
-    if (result.value?.exercises?.length) {
-      toast.add({
-        color: "success",
-        title: "Workout created successfully!",
-      });
-      emit("close", true);
-    } else {
-      throw new Error("Workout missing exercises.");
+    // Create workout
+    const { workout: result, error } = await useCreateWorkout(updatedWorkout);
+
+    // Log result for debugging (optional, consider using a proper logging service in production)
+    console.debug("Workout creation result:", result?.value);
+
+    // Check for errors
+    if (error.value) {
+      throw new Error(error.value.message || "Failed to create workout");
     }
-  } catch (error) {
-    console.error("Error creating workout:", error);
+
+    // Validate result
+    if (
+      !result.value ||
+      !Array.isArray(result.value.exercises) ||
+      result.value.exercises.length === 0
+    ) {
+      throw new Error(
+        "Invalid workout response: missing or empty exercises array",
+      );
+    }
+
+    // Show success notification
     toast.add({
-      color: "error",
-      title: "Failed to create workout",
+      color: "green",
+      title: "Workout created successfully!",
+      icon: "i-heroicons-check-circle",
     });
+
+    // Emit success event
+    emit("close", true);
+  } catch (error) {
+    // Enhanced error handling
+    const errorMessage =
+      error.message ||
+      "An unexpected error occurred while creating the workout";
+    console.error("Error creating workout:", {
+      message: errorMessage,
+      stack: error.stack,
+    });
+
+    // Show error notification
+    toast.add({
+      color: "red",
+      title: "Failed to create workout",
+      description: errorMessage,
+      icon: "i-heroicons-exclamation-circle",
+    });
+
+    // Re-throw error for upstream handling if needed
+    throw error;
   }
 }
 
