@@ -28,11 +28,13 @@
 
   /*Testing*/
   /*--color-primary: #00A15C;        Accessible bright green */
-  --color-primary: #007A45;
-  --color-secondary: #268586;     /* Distinct cool secondary */
-  --color-tertiary: #5089C6;      /* Balanced, visible tertiary */
-  --color-bg: #2C2F36;            /* Deeper charcoal */
- --color-coral:#F38D68;
+
+  /*Testing*/
+
+  --color-primary: #07c569;
+  --color-secondary: coral;
+  --color-tertiary: #6070D0;    /* Darker, muted blue */
+  --color-bg: #1F2227; /* Deeper charcoal background */
 }
 
 

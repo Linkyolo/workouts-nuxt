@@ -6,6 +6,7 @@ import { useDeleteWorkout } from "~/composables/workout/useDeleteWorkout";
 import { useFormatDate } from "~/utils/useFormatDate";
 const { workouts, pending, error, refreshWorkouts } = await useFetchWorkouts();
 
+const toast = useToast();
 const columns = [
   {
     accessorKey: "id",
@@ -93,6 +94,12 @@ function closeModal() {
 const deleteWorkout = (id: number) => {
   const res = useDeleteWorkout(id);
   console.log("Deletetion res:", res);
+  if (!res.error) {
+    toast.add({
+      color: "success",
+      title: "Workout deleted successfully!",
+    });
+  }
 };
 
 const isModalOpen = computed({
@@ -157,7 +164,7 @@ const isModalOpen = computed({
       <UDropdownMenu :items="getDropdownActions(row.original.id)">
         <UButton
           icon="i-lucide-ellipsis-vertical"
-          color="neutral"
+          color="secondary"
           variant="ghost"
           aria-label="Actions"
         />
