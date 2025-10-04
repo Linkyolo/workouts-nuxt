@@ -1,56 +1,41 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { UFormField } from "#components";
 import { useToast } from "#imports";
-import { useOverlay } from "#imports";
 import { useFetchSingleWorkout } from "~/composables/workout/useFetchSingleWorkout";
 import { useEditWorkout } from "~/composables/workout/useEditWorkout";
-import { Workout } from "~/types/Workout";
 
 const props = defineProps<{
   id: number;
 }>();
-
-// Initialize reactive workout state
-const workout = ref<Workout>({
-  startTime: null,
-  endTime: null,
-  type: "",
-  userId: 1, // TODO: Replace with dynamic user context (e.g., useAuth().user.id)
-  exercises: [],
-});
 
 const emit = defineEmits<{
   close: [boolean];
 }>();
 
 const toast = useToast();
-const overlay = useOverlay();
+
+// Initialize reactive workout state
+const workout = ref<Workout>({
+  startTime: null,
+  endTime: null,
+  type: "",
+  userId: 1, // TODO: Replace with dynamic user context
+  exercises: [],
+});
 
 // Fetch workout data
 const {
   workout: workoutData,
   pending,
   error,
-} = await useFetchSingleWorkout(props.id);
+} = useFetchSingleWorkout(props.id);
 
 // Update workout state when data is fetched
 watch(
   workoutData,
   (newVal) => {
-    console.log("workout detected...", newVal);
     if (newVal) {
-      workout.value = {
-        ...newVal,
-        exercises: Array.isArray(newVal.exercises) ? [...newVal.exercises] : [],
-      };
-    } else {
-      toast.add({
-        title: "Workout not found",
-        description: "Workout not found",
-        color: "error",
-      });
-      emit("close", false);
+      workout.value = structuredClone(newVal);
+      console.log("Updated workout state:", workout.value);
     }
   },
   { immediate: true },
@@ -84,49 +69,40 @@ const deleteExercise = (index: number) => {
   workout.value.exercises.splice(index, 1);
 };
 
-// Debugging
-onMounted(() => {
-  console.log("Mounted: workout.value", workout.value);
-  console.log("Mounted: workoutData.value", workoutData.value);
-  console.log("Mounted: pending", pending.value);
-});
+const { editWorkout, pending: editPending } = useEditWorkout();
 
-// Submit workout
 async function submitWorkout() {
-  workout.value.type = "Strength & Condition";
-  const now = new Date().toISOString();
-  workout.value.startTime = now;
-  workout.value.endTime = now;
+  if (editPending.value) return;
 
-  try {
-    const { workout: result } = await useEditWorkout(props.id, workout.value);
+  // Set default values if not provided
+  workout.value.type = workout.value.type || "Strength & Condition";
+  workout.value.startTime = workout.value.startTime || new Date().toISOString();
+  workout.value.endTime = workout.value.endTime || new Date().toISOString();
 
-    console.log("EDITING ---->", result);
-    if (result.value?.exercises?.length) {
-      toast.add({
-        color: "success",
-        title: "Workout created successfully!",
-      });
-      emit("close", true);
-    } else {
-      throw new Error("Workout missing exercises.");
-    }
-  } catch (error) {
-    console.error("Error creating workout:", error);
+  const result = await editWorkout(props.id, workout.value);
+  if (result && Array.isArray(result.exercises)) {
+    toast.add({
+      color: "success",
+      title: "Workout edited successfully!",
+    });
+    emit("close", true);
+  } else {
     toast.add({
       color: "error",
-      title: "Failed to create workout",
+      title: "Failed to edit workout",
     });
   }
 }
 </script>
 
 <template>
-  <UForm :state="workout" class="flex flex-col items-center">
+  <div v-if="pending" class="flex justify-center">
+    <p>Loading workout...</p>
+  </div>
+  <UForm v-else :state="workout" class="flex flex-col items-center">
     <h1>EDIT workout</h1>
-    <!-- Add Exercise Button -->
-
-    {{ workout }}
+    <!-- Debug: Display workout data -->
+    <pre v-if="workout">{{ JSON.stringify(workout, null, 2) }}</pre>
 
     <UButton @click="addExercise" size="md" color="secondary" variant="solid">
       Add Exercise
@@ -134,7 +110,7 @@ async function submitWorkout() {
 
     <!-- Exercises Inputs -->
     <div
-      v-for="(ex, id) in workout?.exercises"
+      v-for="(ex, id) in workout.exercises"
       :key="id"
       class="modal flex gap-2 my-4 mx-8"
     >
@@ -180,7 +156,13 @@ async function submitWorkout() {
     </div>
 
     <!-- Submit Workout -->
-    <UButton @click="submitWorkout" size="md" color="primary" variant="solid">
+    <UButton
+      @click="submitWorkout"
+      size="md"
+      color="primary"
+      variant="solid"
+      :disabled="pending"
+    >
       Send
     </UButton>
   </UForm>

@@ -56,6 +56,7 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
         onSelect: () => {
           console.log("WIll edit id=...", id);
           onShowEditWorkout(id);
+          refreshWorkouts();
         },
       },
       {
@@ -65,8 +66,7 @@ function getDropdownActions(id: number): DropdownMenuItem[][] {
         onSelect: () => {
           console.log("onSelect has id: ", id);
           //TODO change number to HashID
-          deleteWorkout(Number(id));
-
+          handleDeleteWorkout(Number(id));
           refreshWorkouts();
         },
       },
@@ -91,13 +91,26 @@ function closeModal() {
   refreshWorkouts();
 }
 
-const deleteWorkout = (id: number) => {
-  const res = useDeleteWorkout(id);
-  console.log("Deletetion res:", res);
-  if (!res.error) {
+const {
+  deleteWorkout,
+  pending: deletePending,
+  error: deleteError,
+} = useDeleteWorkout();
+
+const handleDeleteWorkout = async (id: number) => {
+  const success = await deleteWorkout(id);
+
+  if (success) {
     toast.add({
       color: "success",
       title: "Workout deleted successfully!",
+    });
+    refreshWorkouts();
+  } else {
+    toast.add({
+      color: "red",
+      title: "Failed to delete workout",
+      description: deleteError.value?.message || "An error occurred.",
     });
   }
 };
