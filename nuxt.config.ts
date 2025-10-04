@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   },
   css: ['./app/assets/css/main.css'],
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', 'nuxt-graphql-request', '@nuxt/icon'],
+  modules: ['@nuxt/ui', 'nuxt-graphql-request', '@nuxt/icon',],
   build: {
     transpile: ['nuxt-graphql-request'],
   },

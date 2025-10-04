@@ -5,7 +5,7 @@ import type { Workout } from "~/types/Workout";
 export const useFetchSingleWorkout = (id: number | string) => {
         const { $graphql } = useNuxtApp();
 
-        const { data: workoutData, pending, error } = useAsyncData(
+        const { data: workoutData, pending, error, refresh } = useAsyncData(
                 `workout-${id}`, // Dynamic key to avoid cache conflicts
                 async () => {
                         try {
@@ -39,5 +39,6 @@ export const useFetchSingleWorkout = (id: number | string) => {
                 workout: workoutData,
                 pending,
                 error,
+                refresh
         };
 };

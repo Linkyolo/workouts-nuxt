@@ -11,6 +11,7 @@ export const WORKOUTS_QUERY = gql`
         name
       }
       exercises{
+        name
         reps
         rest
         sets
