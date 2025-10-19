@@ -35,6 +35,12 @@
   --color-secondary: coral;
   --color-tertiary: #6070D0;   
   --color-bg: #1F2227; 
+
+  /*RGB needed to have primary/5*/
+  --color-primary-rgb: 7, 197, 105;
+  --color-secondary-rgb: 255, 127, 80;
+  --color-tertiary-rgb: 96, 112, 208;
+  --color-bg-rgb: 31, 34, 39;
 }
 
 

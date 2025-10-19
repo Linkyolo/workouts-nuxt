@@ -140,15 +140,21 @@ const isModalOpen = computed({
   />
   <!-- Single Modal for both Create and Edit -->
   <div>
-    <UModal v-model:open="isModalOpen" dismissible calss="w-full">
+    <UModal v-model:open="isModalOpen" dismissible class="w-full">
       <template #content>
         <NewWorkout v-if="showCreateWorkout" />
         <EditWorkout :id="parseInt(selectedID)" v-if="showEditWorkout" />
       </template>
     </UModal>
   </div>
-
-  <UTable :data="workouts" :columns="columns" class="flex-1">
+  <UTable
+    :data="workouts"
+    :columns="columns"
+    class="flex-1"
+    :ui="{
+      tr: 'even:bg-secondary/10 odd:bg-tertiary/10 ',
+    }"
+  >
     <!---startTime-->
     <template #startTime-cell="{ row }">
       {{ useFormatDate(row.original.startTime) }}
@@ -158,18 +164,30 @@ const isModalOpen = computed({
       {{ useFormatDate(row.original.endTime) }}
     </template>
     <!-- Exercises -->
+
     <template #exercises-cell="{ row }">
-      <div v-for="(ex, index) in row.original.exercises" :key="index">
-        <div @click="onShowEditWorkout(row.original.id)" class="cursor-pointer">
-          <ol>
-            <li>
-              <p>name: {{ ex?.name }}</p>
-              <p>reps: {{ ex?.reps }}</p>
-              <p>sets: {{ ex?.sets }}</p>
-              <p>rest: {{ ex?.rest }}</p>
-            </li>
-          </ol>
-        </div>
+      <div
+        @click="onShowEditWorkout(row.original.id)"
+        class="cursor-pointer space-y-2"
+      >
+        <ol>
+          <li
+            v-for="(ex, index) in row.original.exercises"
+            :key="index"
+            :style="{
+              backgroundColor:
+                index % 2 === 0
+                  ? 'rgba(7, 197, 105, 0.1)' // light version of --color-primary
+                  : 'rgba(255, 127, 80, 0.1)', // light version of --color-secondary
+            }"
+            class="p-3 rounded-md border border-transparent hover:border-primary transition"
+          >
+            <p><strong>Name:</strong> {{ ex?.name }}</p>
+            <p><strong>Reps:</strong> {{ ex?.reps }}</p>
+            <p><strong>Sets:</strong> {{ ex?.sets }}</p>
+            <p><strong>Rest:</strong> {{ ex?.rest }}</p>
+          </li>
+        </ol>
       </div>
     </template>
 
