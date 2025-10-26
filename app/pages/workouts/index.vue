@@ -140,7 +140,12 @@ const isModalOpen = computed({
   />
   <!-- Single Modal for both Create and Edit -->
   <div>
-    <UModal v-model:open="isModalOpen" dismissible class="w-full">
+    <UModal
+      v-model:open="isModalOpen"
+      dismissible
+      class="w-full"
+      :ui="{ content: 'max-w-4xl' }"
+    >
       <template #content>
         <NewWorkout v-if="showCreateWorkout" />
         <EditWorkout :id="parseInt(selectedID)" v-if="showEditWorkout" />
