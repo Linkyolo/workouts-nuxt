@@ -16,18 +16,6 @@ const workout = ref<Workout>({
   exercises: [],
 });
 
-// // Add a new exercise
-// function addExercise() {
-//   const newExercise: Exercise = {
-//     typology: "",
-//     reps: 0,
-//     sets: 0,
-//     rest: 0,
-//     name: "",
-//   };
-//   workout.value.exercises.push(newExercise);
-// }
-
 // Delete exercise by index
 function deleteExercise(index: number) {
   workout.value.exercises.splice(index, 1);
@@ -215,7 +203,7 @@ function addExercise() {
         <UButton
           @click="addExercise"
           size="md"
-          color="primary"
+          color="secondary"
           class="mt-4"
           icon="i-heroicons-plus-circle"
         >
@@ -227,7 +215,7 @@ function addExercise() {
       <UButton
         @click="sendWorkout"
         size="md"
-        color="tertiary"
+        color="primary"
         variant="solid"
         :loading="pending"
         class="mt-6"
