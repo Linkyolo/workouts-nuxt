@@ -5,19 +5,7 @@
   --font-sans: 'Public Sans', sans-serif;
 
   --breakpoint-3xl: 1920px;
-
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
-/* 
+/*  old palette tests
  --color-primary: #07c569;
  --color-secondary: #0DAB76;
  --color-tertiary: #2f4858; 
@@ -25,9 +13,6 @@
  --color-bg: #353A47;
  --color-vauve:#DFB2F4;
 */
-
-  /*Testing*/
-  /*--color-primary: #00A15C;      
 
   /*Testing*/
 
@@ -72,6 +57,6 @@ body {
   font-family: sans-serif;
 }
 
-.modal input::placeholder {
-  color: #1F2937;
+input::placeholder {
+  color: white;
 }

@@ -202,7 +202,7 @@ async function submitWorkout() {
       </h2>
 
       <div class="space-y-4 bg-white/5 p-6 pr-4 rounded-lg shadow-inner">
-        <UFormField label="Name">
+        <UFormField label="Name" class="text-amber-500 !important">
           <UInput placeholder="e.g. Bench Press" v-model="newExercise.name" />
         </UFormField>
 

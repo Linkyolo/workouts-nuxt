@@ -52,8 +52,7 @@ export default defineNuxtConfig({
         primary: 'primary',
         secondary: 'secondary',
         tertiary: 'tertiary',
-        coral: 'coral'
-      }
+      },
     },
     notifications: {
       position: 'top-0 end-0',
